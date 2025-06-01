@@ -1,6 +1,6 @@
-import OpenAI from "openai";
-import fs from "fs";
-import dayjs from "dayjs";
+const OpenAI = require("openai");
+const fs = require("fs");
+const dayjs = require("dayjs");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
