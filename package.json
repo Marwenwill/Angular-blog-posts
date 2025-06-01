@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "dayjs": "^1.11.13",
+    "ollama": "^0.5.16",
     "openai": "^5.0.1"
   }
 }
