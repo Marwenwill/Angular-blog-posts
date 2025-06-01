@@ -1,0 +1,50 @@
+name: Generate and Publish Angular Blog
+
+on:
+  schedule:
+    - cron: '0 8 * * SUN'  # Chaque dimanche à 9h (heure de Tunis)
+  workflow_dispatch:       # Permet un déclenchement manuel via GitHub UI
+
+jobs:
+  generate_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install openai dayjs
+
+      - name: Generate blog article
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node generate-article.js
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Publish to Dev.to
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        run: |
+          for file in ./articles/*.md; do
+            echo "Publishing $file"
+            TITLE=$(grep '^title:' "$file" | sed 's/title: "\(.*\)"/\1/')
+            BODY=$(cat "$file")
+            JSON=$(jq -n --arg title "$TITLE" --arg body "$BODY" '{
+              article: {
+                title: $title,
+                published: true,
+                body_markdown: $body
+              }
+            }')
+            curl -X POST https://dev.to/api/articles \
+              -H "Content-Type: application/json" \
+              -H "api-key: $DEVTO_API_KEY" \
+              -d "$JSON"
+          done
