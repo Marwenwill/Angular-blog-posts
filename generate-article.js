@@ -1,11 +1,10 @@
-const { Configuration, OpenAIApi } = require("openai");
-const fs = require("fs");
-const dayjs = require("dayjs");
+import OpenAI from "openai";
+import fs from "fs";
+import dayjs from "dayjs";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 async function generate() {
   const topics = JSON.parse(fs.readFileSync("./topics.json", "utf-8"));
@@ -24,15 +23,15 @@ async function generate() {
   - 4–5 section headers
   - Code snippets (Angular 17+)
   - A conclusion with a CTA
-  - Meta: title, tags, description, cover_image in YAML front matter.
+  - YAML front matter with: title, tags, description, cover_image.
   `;
 
-  const res = await openai.createChatCompletion({
+  const completion = await openai.chat.completions.create({
     model: "gpt-4",
     messages: [{ role: "user", content: prompt }],
   });
 
-  const article = res.data.choices[0].message.content;
+  const article = completion.choices[0].message.content;
 
   const filename = `./articles/${dayjs().format("YYYY-MM-DD")}-${nextTopic
     .toLowerCase()
