@@ -1,0 +1,16 @@
+{
+  "name": "angular-blog-posts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generate-article.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "openai": "^5.0.1"
+  }
+}
